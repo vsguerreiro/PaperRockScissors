@@ -8,11 +8,32 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <h1>Rock, Paper, Scissors Game</h1>
-    <div id="results"></div>
+    <div class="header-container">
+        <h1>Rock, Paper, Scissors Game</h1>
+    </div>
+
+    <p>Round: <span id="roundsPlayed">0</span></p>
+
+    <div id="results">
+        <p>Player: <span id="playerScore">0</span></p>
+        <p>Computer: <span id="computerScore">0</span></p>
+        <p id="roundResult"></p>
+        <p id="gameResult"></p>
+    </div>
+    <br/>
+    <br/>
+
+    <div class="choice-container">
     <button class="choice-button" id="rock">Rock</button>
     <button class="choice-button" id="paper">Paper</button>
-    <button class="choice-button" id="scissors">Scissors</button>    
+    <button class="choice-button" id="scissors">Scissors</button> 
+    </div>
+
+    <br/>
+
+    <center>
+        <button class="gameOver-button" id="gameOverButton" style="display: none">Restart</button>
+    </center>
     
 </body>
 

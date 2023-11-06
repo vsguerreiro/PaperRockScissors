@@ -5,29 +5,27 @@ let roundsPlayed = 0;
 
 // Function to start the game and handle each round.
 function startGame() {
+
   // Get the player's selection.
   const choiceButtons = document.querySelectorAll(".choice-button");
   choiceButtons.forEach((button) => {
     button.addEventListener("click", function (e) {
+      // Check if the game has already ended (after 5 rounds).
+
+      // Increment the rounds played.
+      roundsPlayed++;
+      
+      if (roundsPlayed > 5) {
+        displayGameResults(roundsPlayed);
+      }
+      
       const playerSelection = button.id;
 
       // Get the computer's selection.
       const computerSelection = getComputerChoice();
-
-      // Check if the game has already ended (after 5 rounds).
-      if (roundsPlayed >= 5) {
-        return;
-      }
-
-      // Increment the rounds played.
-      roundsPlayed++;
-
-      //
+      
       // Determine the winner of the round.
       const roundWinner = determineWinner(playerSelection, computerSelection);
-
-      // Display the round result in the DOM.
-      displayRoundResult(playerSelection, computerSelection, roundWinner);
 
       // Update the player's and computer's wins.
       if (roundWinner === "Player wins") {
@@ -35,6 +33,9 @@ function startGame() {
       } else if (roundWinner === "Computer wins") {
         computerWins++;
       }
+
+      // Display the round result in the DOM.
+      displayRoundResult(playerSelection, computerSelection, roundWinner);
 
       // Check if the game is over after this round.
       if (roundsPlayed === 5) {
@@ -91,36 +92,83 @@ function determineWinner(playerSelection, computerSelection) {
   }
 }
 
+// In the displayRoundResult function, update the round result in the DOM.
 function displayRoundResult(playerSelection, computerSelection, roundWinner) {
-  // Display the round result in the DOM.
-  const resultsDiv = document.querySelector("#results");
-  resultsDiv.innerHTML += `
-  <p>Player selected ${playerSelection}.</p>
-  <p>Computer selected ${computerSelection}.</p>
-  <p>${roundWinner}</p>
-  `;
+  // Check if the game is over after this round.
+  if (isGameOver()) {
+    displayGameResults(playerWins, computerWins);
+    // Show the "Game Over" button when the game ends.
+    gameOverButton.style.display = "block";
+    // Remove event listeners from choice buttons to prevent further selection.
+    choiceButtons.forEach((button) => {
+      button.removeEventListener("click", function (e) {});
+    });
+      
+  } else {
+    // Display the round result and updated scores in the DOM.
+    const roundsPlayedInElement = document.querySelector("#roundsPlayed");
+    const playerScoreElement = document.querySelector("#playerScore");
+    const computerScoreElement = document.querySelector("#computerScore");
+    const roundResultElement = document.querySelector("#roundResult");
+
+    roundsPlayedInElement.textContent = roundsPlayed;
+    playerScoreElement.textContent = playerWins;
+    computerScoreElement.textContent = computerWins;
+
+    roundResultElement.textContent = `Player selected ${playerSelection}, Computer selected ${computerSelection}. ${roundWinner}`;
+  }
 }
 
 function displayGameResults(playerWins, computerWins) {
-  // Display the overall results of the game in the DOM.
-  const resultsDiv = document.querySelector("#results");
-  resultsDiv.innerHTML += `
-    <p>Player wins: ${playerWins}</p>
-    <p>Computer wins: ${computerWins}</p>
-  `;
+  // Display the final game result in the DOM.
+  const gameResultElement = document.querySelector("#gameResult");
 
-  // Determine the game winner.
-  let gameResult = "";
   if (playerWins > computerWins) {
-    gameResult = "Congratulations! You win the game!";
+    gameResultElement.textContent = "Congratulations! You win the game!";
   } else if (computerWins > playerWins) {
-    gameResult = "Computer wins the game!";
+    gameResultElement.textContent = "Computer wins the game!";
   } else {
-    gameResult = "It's a tie! No overall winner.";
+    gameResultElement.textContent = "It's a tie! No overall winner.";
   }
-
-  resultsDiv.innerHTML += `<p>${gameResult}</p>`;
 }
+
+function resetGame() {
+  playerWins = 0;
+  computerWins = 0;
+  roundsPlayed = 0;
+  // Clear the round result and game result in the DOM.
+  const roundResultElement = document.querySelector("#roundResult");
+  const gameResultElement = document.querySelector("#gameResult");
+  roundResultElement.textContent = "";
+  gameResultElement.textContent = "";
+  // Reset the scores in the DOM.
+  const roundsPlayedInElement = document.querySelector("#roundsPlayed");
+  const playerScoreElement = document.querySelector("#playerScore");
+  const computerScoreElement = document.querySelector("#computerScore");
+  roundsPlayedInElement.textContent = roundsPlayed;
+  playerScoreElement.textContent = playerWins;
+  computerScoreElement.textContent = computerWins;
+  // Add back the click event listeners to the choice buttons.
+  const choiceButtons = document.querySelectorAll(".choice-button");
+  choiceButtons.forEach((button) => {
+    button.addEventListener("click", startGame);
+  });
+  // Hide the "Game Over" button again when the game is reset.
+  const gameOverButton = document.getElementById("gameOverButton");
+  gameOverButton.style.display = "none";
+  startGame();
+}
+
+// Function to check if the game is over.
+function isGameOver() {
+  return roundsPlayed === 5;
+}
+
+// Add a click event listener to the "Game Over" button to reset the game.
+const gameOverButton = document.getElementById("gameOverButton");
+gameOverButton.addEventListener("click", resetGame);
+
 
 // Start the game when the first button is pressed.
 startGame();
+
